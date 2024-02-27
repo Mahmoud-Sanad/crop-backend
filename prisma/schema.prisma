@@ -22,15 +22,16 @@ model admin {
 }
 
 model user {
-  id          Int          @unique @default(autoincrement())
-  name        String
-  nationalId  String
-  farmerCard  String
-  phoneNumber String
-  adminId     Int?
-  createdBy   admin?       @relation(fields: [adminId], references: [id], onDelete: SetNull)
-  locations   location[]
-  assumption  assumption[]
+  id           Int          @unique @default(autoincrement())
+  name         String
+  nationalId   String
+  farmerCard   String
+  phoneNumber  String
+  adminId      Int?
+  createdBy    admin?       @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  locations    location[]
+  assumption   assumption[]
+  warningCount Int?         @default(0)
 }
 
 model location {
