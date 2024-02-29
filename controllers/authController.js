@@ -82,5 +82,4 @@ exports.isLoggedIn = catchAsync(async (req,res,next)=>{
     console.log(freshUser);
     req.user = freshUser;
     next();
-
 });
