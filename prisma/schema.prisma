@@ -32,6 +32,7 @@ model user {
   locations    location[]
   assumption   assumption[]
   warningCount Int?         @default(0)
+  status       user_status  @default(Available)
 }
 
 model location {
@@ -81,6 +82,11 @@ model assumption_appeal {
   assumptionId  Int?
   description   String?
   appeal_status assumption_appeal_status @default(Pending)
+}
+
+enum user_status {
+  Banned
+  Available
 }
 
 enum assumption_status {
