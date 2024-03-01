@@ -6,9 +6,14 @@ const prisma = new PrismaClient();
 exports.createFarmer = catchAsync(async(req,res,next)=>{
     const farmer = await prisma.user.create({
         data:{
-            ...req.body
+            
+            ...req.body,
+            adminId  : req.user.id
+            
+
         }
     });
+    console.log(req.bpdy);
     res.status(201).json({
         farmer
     });

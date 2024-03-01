@@ -24,7 +24,7 @@ model admin {
 model user {
   id           Int          @unique @default(autoincrement())
   name         String
-  nationalId   String
+  nationalId   String       @unique
   farmerCard   String
   phoneNumber  String
   adminId      Int?
@@ -33,6 +33,7 @@ model user {
   assumption   assumption[]
   warningCount Int?         @default(0)
   status       user_status  @default(Available)
+  photo        String       @default("https://static.vecteezy.com/system/resources/previews/024/983/914/original/simple-user-default-icon-free-png.png")
 }
 
 model location {
@@ -54,11 +55,13 @@ model latlong {
 }
 
 model plant {
-  id                   Int          @unique @default(autoincrement())
+  id                   Int              @unique @default(autoincrement())
+  photo                String           @default("https://png.pngtree.com/png-clipart/20230113/ourmid/pngtree-red-fresh-tomato-with-green-leaf-png-image_6561484.png")
   name                 String
   fertlizerConsumption Decimal
-  assumption_ai        assumption[] @relation("ai")
-  assumption_farmer    assumption[] @relation("farmer")
+  category             plant_categories @default(Vegetable)
+  assumption_ai        assumption[]     @relation("ai")
+  assumption_farmer    assumption[]     @relation("farmer")
 }
 
 model assumption {
@@ -99,4 +102,14 @@ enum assumption_appeal_status {
   Pending
   accepted
   denied
+}
+
+enum plant_categories {
+  Vegetable
+  Fruit
+  Herb
+  Grain
+  Legume
+  Flower
+  Tree
 }

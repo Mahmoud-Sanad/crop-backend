@@ -69,6 +69,7 @@ exports.getUserLocations = catchAsync(async (req,res,next)=>{
 exports.predictLocation = catchAsync(async (req,res,next)=>{
     const {points} = req.body;
     //TODO send to the other backend 
+    console.log(points);
     res.status(501).json({
         message :"comming soon!",
     });
