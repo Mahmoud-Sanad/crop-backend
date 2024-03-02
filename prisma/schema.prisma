@@ -17,6 +17,7 @@ model admin {
   id       Int        @unique @default(autoincrement())
   username String     @unique
   password String
+  role     admin_role @default(User)
   user     user[]
   location location[]
 }
@@ -112,4 +113,9 @@ enum plant_categories {
   Legume
   Flower
   Tree
+}
+
+enum admin_role {
+  Admin
+  User
 }

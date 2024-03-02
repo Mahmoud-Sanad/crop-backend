@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 exports.createPlant = catchAsync(async(req,res,next)=>{
     const plant = await prisma.plant.create({
         data:{
-            ...req.body
+            
         }
     });
     res.status(201).json({
