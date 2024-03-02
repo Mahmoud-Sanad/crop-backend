@@ -24,34 +24,7 @@ exports.getLocations = catchAsync(async (req,res,next)=>{
         locations
     });
 });
-exports.plantingLocation = catchAsync(async(req,res,next)=>{
-    const {plantId , locationId,startDate,farmerId} = req.body;
-    const planting = await prisma.assumption.create({
-        data:{
-            startDate,
-            userId:farmerId,
-            locationId,
-            plantId_farmer:plantId,
-        }
-    });
-    res.status(201).json({
-        planting,
-    });
-});
-exports.getLocation = catchAsync(async (req,res,next)=>{
-    const locationId = req.params.id;
-    const location = await prisma.location.findFirst({
-        where:{
-            id:locationId
-        },
-        include:{
-            assumption:true,
-        }
-    });
-    res.status(200).json({
-        location,
-    });
-});
+
 exports.getUserLocations = catchAsync(async (req,res,next)=>{
     const farmerId = req.params.id;
     const locations = await prisma.location.findMany({
@@ -66,34 +39,22 @@ exports.getUserLocations = catchAsync(async (req,res,next)=>{
         locations,
     });
 });
-exports.predictLocation = catchAsync(async (req,res,next)=>{
-    const {points} = req.body;
-    //TODO send to the other backend 
-    console.log(points);
-    res.status(501).json({
-        message :"comming soon!",
+
+exports.getLocationById = catchAsync(async (req,res,next)=>{
+    const {id} = req.params;
+    const location = await prisma.location.findUnique({
+        where:{
+            id,
+        },
+        include:{
+            farmer:true,
+            assumption:true
+        }
+    });
+    if (!location){
+        return next(new AppError("No location found with this id!",404));
+    }
+    res.status(200).json({
+        location
     });
 });
-exports.autoPredict = async ()=>{
-   try {
-        const locations = await prisma.location.findMany({
-            where:{
-                assumption:{
-                    every:{
-                        plantId_ai:null
-                    }
-                }
-            },
-            include:{
-                latlongs:true
-            }
-        });
-        console.log(locations);
-        /*  TODO
-            logic => loop on each location and send the points to get predicted.
-            return the result and update the ai aussumption with the plant returned and the status 
-        */
-   } catch (error) {
-    console.log(error);
-   }
-}; 

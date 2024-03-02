@@ -1,10 +1,8 @@
-const authController = require("../controllers/authController");
 const FarmLocationController = require("../controllers/farmLocationController");
+const authController = require("../controllers/authController");
 const router = require("express").Router();
 router.use(authController.isLoggedIn);
 router.route("/").post(FarmLocationController.createFarmLocation).get(FarmLocationController.getLocations);
-router.route("/plant").post(FarmLocationController.plantingLocation);
 router.route("/farmer/:id").post(FarmLocationController.getUserLocations);
-router.route("/predict").post(FarmLocationController.predictLocation);
-router.route("/:id").get(FarmLocationController.getLocation);
+router.route("/:id").get(FarmLocationController.getLocationById);
 module.exports = router;

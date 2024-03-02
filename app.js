@@ -6,10 +6,12 @@ const authRouter = require('./routers/authRouter');
 const farmerRouter = require('./routers/farmerRouter');
 const plantRouter = require('./routers/plantRouter');
 const farmLocationRouter = require('./routers/farmLocationRouter');
-const farmLocationController = require("./controllers/farmLocationController");
+const assumptionRouter = require('./routers/assumptionRouter');
+const predictionRouter = require('./routers/predictionRouter');
+const predictionController = require("./controllers/predictionController");
 const cron = require('node-cron');
 cron.schedule("0 0 * * *",async()=>{
-    await farmLocationController.autoPredict();
+    await predictionController.autoPredict();
 });
 
 app.use(express.json());
@@ -20,6 +22,8 @@ app.use('/api/auth' ,authRouter );
 app.use('/api/farmer' ,farmerRouter );
 app.use('/api/location' ,farmLocationRouter );
 app.use('/api/plant' ,plantRouter );
+app.use('/api/assumption' ,assumptionRouter );
+app.use('/api/prediction' ,predictionRouter );
 app.all("*",(req,res,next)=>{
     res.status(404).json({
         message: "wrong URL",
