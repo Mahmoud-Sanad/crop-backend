@@ -25,6 +25,12 @@ exports.getAssumptionById = catchAsync(async (req,res,next)=>{
         assumption
     });
 });
+exports.getAssumptions = catchAsync(async (req,res,next)=>{
+    const assumptions = await prisma.assumption.findMany({});
+    res.status(200).json({
+        assumptions,
+    });
+});
 exports.plantingLocation = catchAsync(async(req,res,next)=>{
     const {plantId , locationId,startDate,farmerId} = req.body;
     const planting = await prisma.assumption.create({

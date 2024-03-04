@@ -11,26 +11,37 @@ exports.predictLocation = catchAsync(async (req,res,next)=>{
         message :"comming soon!",
     });
 });
-exports.autoPredict = async ()=>{
+exports.autoPredict = async ()=>{//  TODO return the result and update the ai aussumption with the plant returned and the status 
    try {
-        const locations = await prisma.location.findMany({
+        const assumptions = await prisma.assumption.findMany({
             where:{
-                assumption:{
-                    every:{
-                        plantId_ai:null
-                    }
-                }
+                plantId_ai:null
             },
             include:{
-                latlongs:true
+                farmerAssumption:{
+                    select:{
+                        predictionDate:true
+                    }
+                },
+                location:{
+                    include:{
+                        latlongs:true
+                    }
+                }
             }
         });
-        console.log(locations);
-        /*  TODO
-            logic => loop on each location and send the points to get predicted.
-            return the result and update the ai aussumption with the plant returned and the status 
-        */
+        console.log(assumptions);
+        const currentDate = Date.now();
+        const prediciontDate = e.startDate + e.farmerAssumption.predictionDate;
+        assumptions.forEach((e)=>{
+            console.log(e);
+            if ( prediciontDate>= currentDate ){
+                // send the points to get predicted.
+            }
+        });
+      
+
    } catch (error) {
-    console.log(error);
+        console.log(error);
    }
 }; 
