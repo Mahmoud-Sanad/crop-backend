@@ -42,12 +42,13 @@ exports.getFarmers = catchAsync(async (req,res,next)=>{
     });
 });
 exports.getFarmer = catchAsync(async(req,res,next)=>{
-    const farmerId = req.params.id;
+    const farmerId = +req.params.id;
     const farmer = await prisma.user.findUnique({
         where:{
             id:farmerId,
         }
     });
+   
     res.status(200).json({
         farmer
     })

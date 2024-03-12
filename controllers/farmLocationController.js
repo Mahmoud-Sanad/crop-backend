@@ -3,15 +3,32 @@ const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const { PrismaClient } =require( '@prisma/client');
 const prisma = new PrismaClient();
+exports.createLatLongs = catchAsync(async (req,res,next)=>{
+    const latLungs = req.body.latlungs;
+    console.log(req.body);
+    latLungs.forEach(async latlung => {
+        await prisma.latlong.create({
+            data:{
+                lang:latlung.lng,
+                lat:latlung.lat,
+                locationId:req.locationId
+                
+            }
+        });
+    });
+    next();
+});
 exports.createFarmLocation = catchAsync(async(req,res,next)=>{
+    console.log("here");
     const location = await prisma.location.create({
+
         data:{
-            ...req.body
+            farmerId:+req.body.farmerId,
+            adminId  : req.user.id
         }
     });
-    res.status(201).json({
-        location
-    });
+    req.locationId = location.id;
+    next();
 });
 exports.getLocations = catchAsync(async (req,res,next)=>{
     const locations = await prisma.location.findMany({

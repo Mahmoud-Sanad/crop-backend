@@ -26,19 +26,25 @@ exports.getAssumptionById = catchAsync(async (req,res,next)=>{
     });
 });
 exports.getAssumptions = catchAsync(async (req,res,next)=>{
-    const assumptions = await prisma.assumption.findMany({});
+    const assumptions = await prisma.assumption.findMany({
+        include:{
+            farmer:true,
+            ai_Assumption:true,
+        }
+    });
     res.status(200).json({
         assumptions,
     });
 });
 exports.plantingLocation = catchAsync(async(req,res,next)=>{
-    const {plantId , locationId,startDate,farmerId} = req.body;
+    const {plantId ,startDate,farmerId} = req.body;
+    const startDateFromString = new Date(startDate);
     const planting = await prisma.assumption.create({
         data:{
-            startDate,
-            userId:farmerId,
-            locationId,
-            plantId_farmer:plantId,
+            startDate:startDateFromString,
+            userId:+farmerId,
+            locationId:req.locationId,
+            plantId_farmer:+plantId,
         }
     });
     res.status(201).json({
