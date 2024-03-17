@@ -5,7 +5,9 @@ const { PrismaClient } =require( '@prisma/client');
 const prisma = new PrismaClient();
 exports.createLatLongs = catchAsync(async (req,res,next)=>{
     const latLungs = req.body.latlungs;
-    console.log(req.body);
+    if (!latLungs){
+        return next(new AppError("latlungs are required!",400));
+    }
     latLungs.forEach(async latlung => {
         await prisma.latlong.create({
             data:{
@@ -20,10 +22,13 @@ exports.createLatLongs = catchAsync(async (req,res,next)=>{
 });
 exports.createFarmLocation = catchAsync(async(req,res,next)=>{
     console.log("here");
+    const {farmerId} = req.body;
+    if (!farmerId){
+        return next(new AppError("farmerId required!",400));
+    }
     const location = await prisma.location.create({
-
         data:{
-            farmerId:+req.body.farmerId,
+            farmerId:+farmerId,
             adminId  : req.user.id
         }
     });

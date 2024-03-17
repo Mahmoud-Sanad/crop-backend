@@ -42,6 +42,9 @@ exports.getAssumptions = catchAsync(async (req,res,next)=>{
 });
 exports.plantingLocation = catchAsync(async(req,res,next)=>{
     const {plantId ,startDate,farmerId} = req.body;
+    if (!plantId||!startDate||!farmerId){
+        return next( new AppError("plantId,startDate,farmerId are required!",400));
+    }
     const startDateFromString = new Date(startDate);
     const planting = await prisma.assumption.create({
         data:{
