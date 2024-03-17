@@ -15,7 +15,10 @@ exports.getAssumptionById = catchAsync(async (req,res,next)=>{
                 include:{
                     latlongs:true,
                 }
-            }
+            },
+            ai_Assumption:true,
+            farmerAssumption:true,
+            
         }
     });
     if (!assumption){
@@ -30,6 +33,7 @@ exports.getAssumptions = catchAsync(async (req,res,next)=>{
         include:{
             farmer:true,
             ai_Assumption:true,
+            farmerAssumption:true
         }
     });
     res.status(200).json({
