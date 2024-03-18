@@ -7,7 +7,7 @@ exports.getAssumptionById = catchAsync(async (req,res,next)=>{
     const {id} = req.params;
     const assumption = await prisma.assumption.findUnique({
         where:{
-            id,
+            id : +id,
         },
         include:{
             farmer:true,

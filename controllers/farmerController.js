@@ -22,7 +22,7 @@ exports.updateFarmer = catchAsync(async(req,res,next)=>{
     const farmerId = req.params.id;
     const farmer = await prisma.user.update({
         where:{
-            id:farmerId
+            id:+farmerId
         },
         data:{
             ...req.body

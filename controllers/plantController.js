@@ -4,8 +4,11 @@ const catchAsync = require("../utils/catchAsync");
 const { PrismaClient } =require( '@prisma/client');
 const prisma = new PrismaClient();
 exports.createPlant = catchAsync(async(req,res,next)=>{
+    const {name ,fertlizerConsumption } = req.body;
     const plant = await prisma.plant.create({
         data:{
+            name,
+            fertlizerConsumption,
             
         }
     });
