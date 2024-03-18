@@ -24,15 +24,34 @@ exports.createLatLongs = catchAsync(async (req, res, next) => {
 exports.createFarmLocation = catchAsync(async(req,res,next)=>{
     console.log("here");
     const {farmerId} = req.body;
-    if (!farmerId){
-        return next(new AppError("farmerId required!",400));
+    const {nationalId} = req.body;
+    console.log(req.body);
+    let location;
+    if (!farmerId&&!nationalId){
+        return next(new AppError("farmerId or members required",400));
     }
-    const location = await prisma.location.create({
-        data:{
-            farmerId:+farmerId,
-            adminId  : req.user.id
-        }
-    });
+    if (!farmerId){
+        const farmer = await prisma.user.findUnique({
+            where:{
+                nationalId,
+            }
+        });
+        console.log(farmer);
+        location = await prisma.location.create({
+            data:{
+                farmerId:+farmer.id,
+                adminId  : req.user.id
+            }
+        });
+    }else if (!nationalId){
+        location = await prisma.location.create({
+            data:{
+                farmerId:+farmerId,
+                adminId  : req.user.id
+            }
+        });
+    }
+    
     req.locationId = location.id;
     next();
 });

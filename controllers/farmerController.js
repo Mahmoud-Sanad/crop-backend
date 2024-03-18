@@ -3,6 +3,17 @@ const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const { PrismaClient } =require( '@prisma/client');
 const prisma = new PrismaClient();
+exports.deleteFarmer = catchAsync(async(req,res,next)=>{
+    const {id} = req.params;
+    await prisma.user.delete({
+        where:{
+            id:+id
+        }
+    });
+    res.status(204).json({
+        message:"deleted"
+    });
+});
 exports.createFarmer = catchAsync(async(req,res,next)=>{
     const farmer = await prisma.user.create({
         data:{
