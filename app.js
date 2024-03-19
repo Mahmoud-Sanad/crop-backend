@@ -8,6 +8,7 @@ const plantRouter = require('./routers/plantRouter');
 const farmLocationRouter = require('./routers/farmLocationRouter');
 const assumptionRouter = require('./routers/assumptionRouter');
 const predictionRouter = require('./routers/predictionRouter');
+const analyticsRouter = require('./routers/analyticsRouter');
 const predictionController = require("./controllers/predictionController");
 const cron = require('node-cron');
 cron.schedule("0 0 * * *",async()=>{
@@ -24,6 +25,7 @@ app.use('/api/location' ,farmLocationRouter );
 app.use('/api/plant' ,plantRouter );
 app.use('/api/assumption' ,assumptionRouter );
 app.use('/api/prediction' ,predictionRouter );
+app.use('/api/analytics' ,analyticsRouter );
 app.all("*",(req,res,next)=>{
     res.status(404).json({
         message: "wrong URL",
