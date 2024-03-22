@@ -22,7 +22,6 @@ exports.createLatLongs = catchAsync(async (req, res, next) => {
     next();
 });
 exports.createFarmLocation = catchAsync(async(req,res,next)=>{
-    console.log("here");
     const {farmerId} = req.body;
     const {nationalId} = req.body;
     console.log(req.body);

@@ -18,13 +18,15 @@ exports.createFarmer = catchAsync(async(req,res,next)=>{
     const farmer = await prisma.user.create({
         data:{
             
+            farmerCard :  req.farmerCard,
+            photo: req.profile,
             ...req.body,
             adminId  : req.user.id
             
 
         }
     });
-    console.log(req.bpdy);
+    console.log(req.body);
     res.status(201).json({
         farmer
     });

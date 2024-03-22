@@ -9,6 +9,7 @@ exports.createPlant = catchAsync(async(req,res,next)=>{
         data:{
             name,
             fertlizerConsumption,
+            photo:req.url,
             
         }
     });
