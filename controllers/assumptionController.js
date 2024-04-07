@@ -14,7 +14,36 @@ exports.deleteAssumption = catchAsync(async(req,res,next)=>{
         message:"deleted"
     });
 });
+exports.editAssumption = catchAsync(async (req,res,next)=>{
+    const {id} = req.params;
+    const {result , planted} = req.body;
+    let assumption = await prisma.assumption.findUnique({
+        where:{
+            id :+id,
 
+        }
+    });
+    if (!assumption){
+        return next(new AppError("no assumption found!",404));
+    }
+    const equal = +planted === +result;
+    
+    assumption=  await prisma.assumption.update({
+        where:{
+            id:+id
+        }
+        ,
+        data:{
+            plantId_farmer:+planted,
+            plantId_ai:+result,
+            status:equal?"Right":"Wrong",
+            
+        }
+    });
+    res.status(201).json({
+        assumption,
+    })
+});
 exports.getAssumptionByUserId = catchAsync(async (req,res,next)=>{
     const {id} = req.params;
     const assumption = await prisma.assumption.findMany({

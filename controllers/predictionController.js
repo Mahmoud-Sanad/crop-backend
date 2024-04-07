@@ -2,11 +2,16 @@ const jwt = require("jsonwebtoken");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const { PrismaClient } =require( '@prisma/client');
+const { default: axios } = require("axios");
 const prisma = new PrismaClient();
 exports.predictLocation = catchAsync(async (req,res,next)=>{
     const {points} = req.body;
-    //TODO send to the other backend 
-    console.log(points);
+    const list = points.map(point => [point.lng, point.lat]);
+    const response  = await axios.post('http://localhost:8000/api/classify-crop/',{
+        "coordinates" : list
+    });
+
+    console.log(response);
     res.status(501).json({
         message :"comming soon!",
     });

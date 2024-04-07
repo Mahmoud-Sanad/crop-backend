@@ -11,9 +11,9 @@ const predictionRouter = require('./routers/predictionRouter');
 const analyticsRouter = require('./routers/analyticsRouter');
 const predictionController = require("./controllers/predictionController");
 const cron = require('node-cron');
-cron.schedule("0 0 * * *",async()=>{
-    await predictionController.autoPredict();
-});
+// cron.schedule("0 0 * * *",async()=>{
+//     await predictionController.autoPredict();
+// });
 
 app.use(express.json());
 
