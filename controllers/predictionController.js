@@ -10,10 +10,10 @@ exports.predictLocation = catchAsync(async (req,res,next)=>{
     const response  = await axios.post('http://localhost:8000/api/classify-crop/',{
         "coordinates" : list
     });
-
+    
     console.log(response);
-    res.status(501).json({
-        message :"comming soon!",
+    res.status(200).json({
+        prediction:response.data
     });
 });
 exports.autoPredict = async ()=>{//  TODO return the result and update the ai aussumption with the plant returned and the status 
@@ -38,10 +38,13 @@ exports.autoPredict = async ()=>{//  TODO return the result and update the ai au
         console.log(assumptions);
         const currentDate = Date.now();
         const prediciontDate = e.startDate + e.farmerAssumption.predictionDate;
-        assumptions.forEach((e)=>{
+        assumptions.forEach(async (e)=>{
             console.log(e);
             if ( prediciontDate>= currentDate ){
-                // send the points to get predicted.
+                const response  = await axios.post('http://localhost:8000/api/classify-crop/',{
+                    "coordinates" : e.location.latlongs
+                });
+                console.log(response.data);
             }
         });
       
