@@ -60,7 +60,7 @@ model plant {
   photo                String           @default("https://png.pngtree.com/png-clipart/20230113/ourmid/pngtree-red-fresh-tomato-with-green-leaf-png-image_6561484.png")
   name                 String
   fertlizerConsumption Decimal
-  predictionDate       DateTime?
+  detectMonth          Int?
   category             plant_categories @default(Vegetable)
   assumption_ai        assumption[]     @relation("ai")
   assumption_farmer    assumption[]     @relation("farmer")

@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 exports.predictLocation = catchAsync(async (req,res,next)=>{
     const {points} = req.body;
     const list = points.map(point => [point.lng, point.lat]);
-    const response  = await axios.post('http://localhost:8000/api/classify-crop/',{
+    const response  = await axios.post('http://143.110.165.70/api-django/classify-crop/',{
         "coordinates" : list
     });
     
@@ -16,40 +16,155 @@ exports.predictLocation = catchAsync(async (req,res,next)=>{
         prediction:response.data
     });
 });
-exports.autoPredict = async ()=>{//  TODO return the result and update the ai aussumption with the plant returned and the status 
-   try {
+exports.autoPredict = async () => {
+    try {
+        // Fetch assumptions that have not been classified by AI yet
         const assumptions = await prisma.assumption.findMany({
-            where:{
-                plantId_ai:null
+            where: {
+                plantId_ai: null
             },
-            include:{
-                farmerAssumption:{
-                    select:{
-                        predictionDate:true
+            include: {
+                farmerAssumption: {
+                    select: {
+                        detectMonth: true
                     }
                 },
-                location:{
-                    include:{
-                        latlongs:true
+                location: {
+                    include: {
+                        latlongs: true
                     }
                 }
             }
         });
-        console.log(assumptions);
-        const currentDate = Date.now();
-        const prediciontDate = e.startDate + e.farmerAssumption.predictionDate;
-        assumptions.forEach(async (e)=>{
-            console.log(e);
-            if ( prediciontDate>= currentDate ){
-                const response  = await axios.post('http://localhost:8000/api/classify-crop/',{
-                    "coordinates" : e.location.latlongs
-                });
-                console.log(response.data);
+
+        const currentDate = new Date();
+
+        // Use Promise.all to wait for all predictions to be processed
+        await Promise.all(assumptions.map(async (assumption) => {
+            const detectionDate = new Date(assumption.startDate);
+            detectionDate.setMonth(detectionDate.getMonth() + assumption.farmerAssumption.detectMonth);
+
+            // Only process if the prediction date is in the future
+            if (detectionDate >= currentDate) {
+                try {
+                    const response = await axios.post('http://143.110.165.70/api-django/classify-crop/', {
+                        "coordinates": assumption.location.latlongs
+                    });
+                    
+                    const plant = await prisma.plant.findFirst({
+                        where:{
+                            name : {
+                                contains:response.data.most_frequent_class_label,
+                            }
+                        }
+                    });
+                    if (!plant) {
+                        const land = await prisma.plant.findFirst({
+                            where:{
+                                name : {
+                                    contains:"land",
+                                }
+                            }
+                        });
+                        await prisma.assumption.update({
+                            where:{
+                                id:assumption.id
+                            },
+                            data:{
+                                plantId_ai:land.id
+                            }
+                        });
+                    }else {
+                        await prisma.assumption.update({
+                            where:{
+                                id:assumption.id
+                            },
+                            data:{
+                                plantId_ai:plant.id,
+                            }
+                        });
+                    }
+                    console.log(response.data);
+                } catch (error) {
+                    console.error(`Error processing prediction for assumption ID ${assumption.id}: ${error}`);
+                }
             }
-        });
+        }));
+
+        console.log("All assumptions processed.");
+    } catch (error) {
+        console.error(`Failed during assumptions retrieval or initial processing: ${error}`);
+    }
+};
+exports.predictAll = catchAsync(async (req,res,next)=>{
+    const assumptions = await prisma.assumption.findMany({
+        where: {
+            plantId_ai: null
+        },
+        include: {
+            farmerAssumption: {
+                select: {
+                    detectMonth: true
+                }
+            },
+            location: {
+                include: {
+                    latlongs: true
+                }
+            }
+        }
+    });
+
+   
+
+    // Use Promise.all to wait for all predictions to be processed
+    await Promise.all(assumptions.map(async (assumption) => {
       
 
-   } catch (error) {
-        console.log(error);
-   }
-}; 
+        // Only process if the prediction date is in the future
+   
+            try {
+                const response = await axios.post('http://143.110.165.70/api-django/classify-crop/', {
+                    "coordinates": assumption.location.latlongs
+                });
+                
+                const plant = await prisma.plant.findFirst({
+                    where:{
+                        name : {
+                            contains:response.data.most_frequent_class_label,
+                        }
+                    }
+                });
+                if (!plant) {
+                    const land = await prisma.plant.findFirst({
+                        where:{
+                            name : {
+                                contains:"land",
+                            }
+                        }
+                    });
+                    await prisma.assumption.update({
+                        where:{
+                            id:assumption.id
+                        },
+                        data:{
+                            plantId_ai:land.id
+                        }
+                    });
+                }else {
+                    await prisma.assumption.update({
+                        where:{
+                            id:assumption.id
+                        },
+                        data:{
+                            plantId_ai:plant.id,
+                        }
+                    });
+                }
+                console.log(response.data);
+            } catch (error) {
+                console.error(`Error processing prediction for assumption ID ${assumption.id}: ${error}`);
+            }
+
+    }));
+});
