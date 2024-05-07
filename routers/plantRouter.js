@@ -6,4 +6,5 @@ const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage()});
 router.use(authController.isLoggedIn);
 router.route("/").get(plantController.getAll).post(upload.single("image"),uploadController.seedImage,plantController.createPlant);
+router.route("/:id").get(plantController.getPlantById);
 module.exports = router;

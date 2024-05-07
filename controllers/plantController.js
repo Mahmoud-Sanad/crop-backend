@@ -3,6 +3,17 @@ const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const { PrismaClient } =require( '@prisma/client');
 const prisma = new PrismaClient();
+exports.getPlantById = catchAsync(async (req,res,next)=>{
+    const {id} = req.params;
+    const plant = await prisma.plant.findUnique({
+       where : {
+        id : +id,
+       }
+    });
+    res.status(201).json({
+        plant
+    });
+});
 exports.createPlant = catchAsync(async(req,res,next)=>{
     const {name ,fertlizerConsumption } = req.body;
     const plant = await prisma.plant.create({
